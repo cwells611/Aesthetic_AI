@@ -30,16 +30,19 @@ if os.path.exists(image_path):
 
 #function that uses the dalle 3 model for image generation 
 def get_image(num, model='dall-e-2'):
+   if os.path.exists(image_path):
+      os.remove(image_path)
    #make call to dalle3 api to generate image based on prompt 
    response = client.images.generate(
       model=model,
-      prompt = f"Please create a photorealistic image of {num} trees in a field with green grass and rolling hills. Do not add any extra features to the image, I want you to follow this prompt directly and depict only what is described in the prompt."
+      prompt = f"Please create a photorealistic image of {num} trees in a field with green grass and rolling hills. Do not add any extra features to the image, I want you to follow this prompt directly and depict only what is described in the prompt.",
+      size="512x512"
    )
    #get image url 
    image_url = response.data[0].url
    #download image 
    image = requests.get(image_url).content
-   #write image to image_path
+   #write image to image_path (static/images/generated_image.jpg)
    with open(image_path, "wb") as image_file:
       image_file.write(image)
    
@@ -62,7 +65,9 @@ def home():
    if request.method == "POST":
       width = request.form.get("width")
       height = request.form.get("height")
-      print(f"Width: {width} \n Height: {height}")
+      input_img = request.form.get("imgInput")
+      if input_img is not None:
+         
       #make call to get_image which will generate image and save it to images dir
       get_image(width)
    return render_template("index.html")
