@@ -4,6 +4,7 @@ import openai
 from openai import OpenAI
 from dotenv import load_dotenv, find_dotenv
 import requests
+import base64
 
 #get the api key from the .env file and create am openai clinet 
 _ = load_dotenv(find_dotenv())
@@ -28,24 +29,56 @@ if not os.path.isdir(image_dir):
 if os.path.exists(image_path):
    os.remove(image_path)
 
-#function that uses the dalle 3 model for image generation 
-def get_image(num, model='dall-e-2'):
-   if os.path.exists(image_path):
-      os.remove(image_path)
-   #make call to dalle3 api to generate image based on prompt 
-   response = client.images.generate(
-      model=model,
-      prompt = f"Please create a photorealistic image of {num} trees in a field with green grass and rolling hills. Do not add any extra features to the image, I want you to follow this prompt directly and depict only what is described in the prompt.",
-      size="512x512"
-   )
-   #get image url 
-   image_url = response.data[0].url
+def save_image(image_url):
    #download image 
    image = requests.get(image_url).content
    #write image to image_path (static/images/generated_image.jpg)
    with open(image_path, "wb") as image_file:
       image_file.write(image)
-   
+
+#function to generate image based on text input
+def generate_image_text_input(num):
+   if os.path.exists(image_path):
+      os.remove(image_path)
+   #make call to dalle3 api to generate image based on prompt 
+   response = client.images.generate(
+      model='dall-e-2',
+      prompt = f"Please create a photorealistic image of {num} trees in a field with green grass and rolling hills. Do not add any extra features to the image, I want you to follow this prompt directly and depict only what is described in the prompt.",
+      size="512x512"
+   )
+   #get image url 
+   image_url = response.data[0].url
+   #save image
+   save_image(image_url)
+
+#function to generated image based on uploaded image input 
+#use a combination of chatgpt's vision capabilities and dall-e model to generate an image
+def generate_image_uploaded_input(image):
+   #encode image 
+   with open(image, "rb") as image_file:
+      b64_image = base64.b64encode(image_file.read()).decode('utf-8')
+   #make call to openai api with decoded image and prompt as input 
+   response = client.chat.completions.create(
+      model="gpt-4o-mini",
+      messages=[
+         {
+            "role": "user",
+            "content": [
+               {
+                  "type": "text",
+                  "text": "What is in this image?",
+               },
+               {
+                  "type": "image_url",
+                  "image_url": {
+                     "url": f"data:image/jpeg;base64,{b64_image}"
+                  },
+               },
+            ],
+         },
+      ],
+   )
+   return (response.choices[0].message.content)
 
 #we will define a function to get teh completion from a given prompt 
 def get_completion(num1, num2, model='gpt-4o-mini'):
@@ -66,10 +99,17 @@ def home():
       width = request.form.get("width")
       height = request.form.get("height")
       input_img = request.form.get("imgInput")
+      #if image is uploaded call uploaded_image function
       if input_img is not None:
-         
-      #make call to get_image which will generate image and save it to images dir
-      get_image(width)
+         #get uploaded image from HTML form 
+         uploaded_image = request.form.get("imgInput")
+         #output is description of input image 
+         img_descriptopn = generate_image_uploaded_input(uploaded_image)
+
+         return render_template("index.html", description=img_descriptopn)
+      #if no uploaded image, make call to get_image which will generate image and save it to images dir
+      else:
+         generate_image_text_input(width)
    return render_template("index.html")
 
 if __name__=='__main__':
