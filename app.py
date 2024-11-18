@@ -66,7 +66,7 @@ def generate_image_uploaded_input(image):
             "content": [
                {
                   "type": "text",
-                  "text": "What is in this image?",
+                  "text": "Analyze this image and provide a detailed description of the room, including the furniture, decor, colors, and any notable objects. Describe the layout, the style of the room (e.g., modern, rustic), and how the objects contribute to its functionality and ambiance. Include any inferences about how this room might be used or what it reveals about its occupants.",
                },
                {
                   "type": "image_url",
@@ -78,7 +78,19 @@ def generate_image_uploaded_input(image):
          },
       ],
    )
-   return (response.choices[0].message.content)
+   #extract text output from response 
+   img_description = (response.choices[0].message.content)
+
+   #after description is producted, pass into dalle model to generate image based on description
+   img_response = client.images.generate(
+      model='dall-e-3',
+      prompt = f"You are an interior designer, and you will be given a description and analysis of an image of a room. Utilizing that description, please generate a re-designed version of that room with the same objects in the original room. Things may be in different location, orientations, etc., but I would like an image that will help me re-design this room from the mindset of an interior designer. Here is the description of the room: {img_description}",
+      size="1024x1024"
+   )
+   #get image url 
+   image_url = img_response.data[0].url
+   #save image
+   save_image(image_url)
 
 #we will define a function to get teh completion from a given prompt 
 def get_completion(num1, num2, model='gpt-4o-mini'):
@@ -100,13 +112,10 @@ def home():
       height = request.form.get("height")
       input_img = request.form.get("imgInput")
       #if image is uploaded call uploaded_image function
-      if input_img is not None:
+      if input_img != "":
          #get uploaded image from HTML form 
          uploaded_image = request.form.get("imgInput")
-         #output is description of input image 
-         img_descriptopn = generate_image_uploaded_input(uploaded_image)
-
-         return render_template("index.html", description=img_descriptopn)
+         generate_image_uploaded_input(uploaded_image)
       #if no uploaded image, make call to get_image which will generate image and save it to images dir
       else:
          generate_image_text_input(width)
