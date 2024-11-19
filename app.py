@@ -6,6 +6,7 @@ from openai import OpenAI
 from dotenv import load_dotenv, find_dotenv
 import requests
 import base64
+import pandas as pd
 
 #get the api key from the .env file and create am openai clinet 
 _ = load_dotenv(find_dotenv())
@@ -24,12 +25,17 @@ image_path = os.path.join(image_dir, image_name)
 if not os.path.isdir(image_dir):
    os.mkdir(image_dir)
 
+def csv_access(csv_file):
+   #read in csv and convert to pd dataframe 
+   furniture_csv = pd.read_csv(csv_file)
+
 #check to see if there is an image in dir, remove if there is
 #only want to display current image, if there is an image in the 
 #folder from a previous run, delete it 
 if os.path.exists(image_path):
    os.remove(image_path)
 
+#function to save generated image for display 
 def save_image(image_url):
    #download image 
    image = requests.get(image_url).content
@@ -38,14 +44,14 @@ def save_image(image_url):
       image_file.write(image)
 
 #function to generate image based on text input
-def generate_image_text_input(num):
+def generate_image(prompt):
    if os.path.exists(image_path):
       os.remove(image_path)
    #make call to dalle3 api to generate image based on prompt 
    response = client.images.generate(
-      model='dall-e-2',
-      prompt = f"Please create a photorealistic image of {num} trees in a field with green grass and rolling hills. Do not add any extra features to the image, I want you to follow this prompt directly and depict only what is described in the prompt.",
-      size="512x512"
+      model='dall-e-3',
+      prompt = f"You will be given a description of a room. That description will include the contents of the room, colors, ambiance, and other factors of the room. Your job will be to take the role of an interior designer and based on the given description, output an image of the designed room to give the user visualization and inspiration for the room they are wanting to design. Utilize the factors given in the description and make sure to include the items given in the description and stay on theme with regards to color, ambiance, etc. Here is the description of the room: {prompt}",
+      size="1024x1024"
    )
    #get image url 
    image_url = response.data[0].url
@@ -54,7 +60,7 @@ def generate_image_text_input(num):
 
 #function to generated image based on uploaded image input 
 #use a combination of chatgpt's vision capabilities and dall-e model to generate an image
-def generate_image_uploaded_input(image):
+def generate_description_uploaded_input(image):
    #encode image 
    with open(image, "rb") as image_file:
       b64_image = base64.b64encode(image_file.read()).decode('utf-8')
@@ -82,44 +88,24 @@ def generate_image_uploaded_input(image):
    #extract text output from response 
    img_description = (response.choices[0].message.content)
 
-   #after description is producted, pass into dalle model to generate image based on description
-   img_response = client.images.generate(
-      model='dall-e-3',
-      prompt = f"You are an interior designer, and you will be given a description and analysis of an image of a room. Utilizing that description, please generate a re-designed version of that room with the same objects in the original room. Things may be in different location, orientations, etc., but I would like an image that will help me re-design this room from the mindset of an interior designer. Here is the description of the room: {img_description}",
-      size="1024x1024"
-   )
-   #get image url 
-   image_url = img_response.data[0].url
-   #save image
-   save_image(image_url)
+   #after description is producted, call generate_image function to generate image using dalle-3 based on description 
+   generate_image(img_description)
 
-#we will define a function to get teh completion from a given prompt 
-def get_completion(num1, num2, model='gpt-4o-mini'):
-   prompt = f"Please add the two following values: {num1} and {num2}"
-   messages = [{"role": "user", "content": prompt}]
-   response = client.chat.completions.create(
-      model=model,
-      messages=messages,
-      temperature=0, # this is the degree of randomness of the model's output
-   )
-   return response.choices[0].message.content
-  
 # A decorator used to tell the application
 # which URL is associated function
 @app.route('/main', methods =["GET", "POST"])
 def home():
    if request.method == "POST":
-      width = request.form.get("width")
-      height = request.form.get("height")
+      input_description = request.form.get("txtInput")
       input_img = request.form.get("imgInput")
       #if image is uploaded call uploaded_image function
       if input_img != "":
          #get uploaded image from HTML form 
          uploaded_image = request.form.get("imgInput")
-         generate_image_uploaded_input(uploaded_image)
+         generate_description_uploaded_input(uploaded_image)
       #if no uploaded image, make call to get_image which will generate image and save it to images dir
       else:
-         generate_image_text_input(width)
+         generate_image(input_description)
    return render_template("index.html")
 
 if __name__=='__main__':
