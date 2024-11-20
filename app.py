@@ -50,7 +50,7 @@ def generate_image(prompt):
    #make call to dalle3 api to generate image based on prompt 
    response = client.images.generate(
       model='dall-e-3',
-      prompt = f"You will be given a description of a room. That description will include the contents of the room, colors, ambiance, and other factors of the room. Your job will be to take the role of an interior designer and based on the given description, output an image of the designed room to give the user visualization and inspiration for the room they are wanting to design. Utilize the factors given in the description and make sure to include the items given in the description and stay on theme with regards to color, ambiance, etc. Here is the description of the room: {prompt}",
+      prompt = f"You will be given a description of a room. That description will include the contents of the room, colors, ambiance, and other factors of the room. Your job will be to take the role of an interior designer and based on the given description, output an image of the designed room to give the user visualization and inspiration for the room they are wanting to design. Utilize the factors given in the description and make sure to include the items given in the description and stay on theme with regards to color, ambiance, etc., Nikon D810 | ISO 64 | focal length 20mm (Voigtlander 20mm f3.5) | Aperature f/9 | Exposure Time 1/40 Sec (DRI). Here is the description of the room: {prompt}",
       size="1024x1024"
    )
    #get image url 
