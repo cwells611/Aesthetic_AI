@@ -73,7 +73,7 @@ def generate_image(prompt):
    #make call to dalle3 api to generate image based on prompt 
    response = client.images.generate(
       model='dall-e-3',
-      prompt = f"You will be given a description of a room. That description will include the contents of the room, colors, ambiance, and other factors of the room. Your job will be to take the role of an interior designer and based on the given description, output an image of the designed room to give the user visualization and inspiration for the room they are wanting to design. Utilize the factors given in the description and make sure to include the items given in the description and stay on theme with regards to color, ambiance, etc., Nikon D810 | ISO 64 | focal length 20mm (Voigtlander 20mm f3.5) | Aperature f/9 | Exposure Time 1/40 Sec (DRI). Here is the description of the room: {prompt}",
+      prompt = f"You will be given a description of a room. That description will include the contents of the room, colors, ambiance, and other factors of the room. Your job will be to take the role of an interior designer and based on the given description, output an image of the designed room to give the user visualization and inspiration for the room they are wanting to design. Utilize the factors given in the description and make sure to include the items given in the description and stay on theme with regards to color, ambiance, etc. Be sure to not include any wall art or decorations that contain words. Here is the description of the room: {prompt}. Nikon D810 | ISO 64 | focal length 20mm (Voigtlander 20mm f3.5) | Aperature f/9 | Exposure Time 1/40 Sec (DRI).",
       size="1024x1024"
    )
    #get image url 
@@ -83,7 +83,6 @@ def generate_image(prompt):
 
 #function to generate description based on selected aesthetic and furniture pieces 
 def generate_description_user_input(selected_pieces, aesthetic):
-   selected_pieces = list(selected_pieces)
    #make api call to gpt4o with the selected pieces and the aesthetic 
    response = client.chat.completions.create(
       model='gpt-4o',
@@ -175,8 +174,11 @@ def home():
          generate_description_uploaded_input(uploaded_image)
       #if no uploaded image, generate description based on form inputs 
       else:
-         generate_description_user_input(selected_items.keys(), aesthetic)
-
+         generate_description_user_input(list(selected_items.keys()), aesthetic)
+      
+      #after image has been generated, give actual furniture recommendations
+      print(f"Keys: {selected_items.keys()}")
+      print(f"Values: {selected_items.values()}")
    return render_template("index.html")
 
 if __name__=='__main__':
