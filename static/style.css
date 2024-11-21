@@ -1,0 +1,11 @@
+#txtInput{
+    text-align: left;
+    font-family: 'Times New Roman', Times, serif;
+    border: 2px solid; 
+    width: 300px;
+    height: 100px;
+}
+
+#furnitureItems{
+    column-count: 2;
+}
