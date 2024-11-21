@@ -198,7 +198,8 @@ def home():
             sources.extend(temp_sources)
          for item in sources: 
             print(item)
-         return render_template("index.html", dynamicSources = sources)
+         recommendation_string = "Based on your preferences and the items in the generated image, here are some furniture recommendations"
+         return render_template("index.html", dynamicSources = sources, title_string = recommendation_string)
    return render_template("index.html")
 
 if __name__=='__main__':

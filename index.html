@@ -63,7 +63,8 @@
                 <button id="submit" name="submit" type="submit">Submit</button>
             </form>
             <img src="{{url_for('static', filename='/images/generated_image.jpg')}}", alt=""/>
-            <!-- <p>{{ description }}</p> -->
+            <p>{{ title_string }}</p>
+            <!-- loop thorugh all img sources for recommended images and add img tag for each src  -->
             {% for src in dynamicSources %}
                 <img class="hide-text", src="{{ src }}"/>
             {% endfor %}
