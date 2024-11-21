@@ -118,6 +118,24 @@ def home():
    if request.method == "POST":
       input_description = request.form.get("txtInput")
       input_img = request.form.get("imgInput")
+      #dictionary that get the status of the checkbox items (checked or unchecked)
+      #on = checked None = unchecked
+      furniture_items = {
+         "coffee_table": request.form.get("coffeeTable"),
+         "side_table": request.form.get("sideTable"),
+         "couch": request.form.get("couch"),
+         "entertainment_center": request.form.get("entertainmentCenter"),
+         "rug": request.form.get("rug"),
+         "bed": request.form.get("bed"),
+         "shelves": request.form.get("shelves"),
+         "lamp": request.form.get("lamp"),
+         "dresser": request.form.get("dresser"),
+         "nightstand": request.form.get("nightstand"),
+         "desk": request.form.get("desk"),
+         "armchair": request.form.get("armchair")
+      }
+      for piece in furniture_items:
+         print(furniture_items[piece])
       #if image is uploaded call uploaded_image function
       if input_img != "":
          #get uploaded image from HTML form 
