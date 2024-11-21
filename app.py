@@ -13,7 +13,7 @@ def piece_df(csv_file, keywords):
    #read in csv file
    df = pd.read_csv(csv_file)
    #create a new dataframe that only contains the rows where any of the keywords is in the image_title column
-   new_df = df.loc[df["image_title"].str.contains('|'.join(keywords), case=False, na=False)]
+   new_df = df[df['image_title'].str.contains('|'.join(keywords), case=False, na=False)]
    return new_df
 
 
@@ -33,6 +33,21 @@ image_path = os.path.join(image_dir, image_name)
 #if directory does not exist, make one 
 if not os.path.isdir(image_dir):
    os.mkdir(image_dir)
+
+#lists of key words for each piece the user could select for later suggestions and csv file
+furniture_csv = 'furniture.csv'
+coffee_table_keywords = ['coffee table']
+side_table_keywords = ['side table', 'end table', 'accent table']
+couch_keywords = ['couch', 'sofa', 'futon', 'sectional'] 
+entertainment_center_keywords = ['entertainment center', 'media', 'tv stand']
+rug_keywords = ['rug', 'area']
+bed_keywords = ['headboard', 'bed']
+shelves_keywords = ['shelves', 'bookshelves', 'bookcase']
+lamp_keywords = ['lamp']
+dresser_keywords = ['dresser', 'chest', 'wardrobe']
+nightstand_keywords = ['nightstand']
+desk_keywords = ['desk', 'desk chair']
+armchair_keywords = ['armchair', 'recliner', 'loveseat', 'chair']
 
 #check to see if there is an image in dir, remove if there is
 #only want to display current image, if there is an image in the 
@@ -103,9 +118,6 @@ def home():
    if request.method == "POST":
       input_description = request.form.get("txtInput")
       input_img = request.form.get("imgInput")
-      couch_keywords = ['couch', 'sofa', 'futon', 'sectional']
-      couch_df = piece_df("furniture.csv", couch_keywords)
-      print(couch_df[0])
       #if image is uploaded call uploaded_image function
       if input_img != "":
          #get uploaded image from HTML form 
