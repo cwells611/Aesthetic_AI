@@ -7,6 +7,7 @@ from dotenv import load_dotenv, find_dotenv
 import requests
 import base64
 import pandas as pd
+import random
 
 #get the api key from the .env file and create am openai clinet 
 _ = load_dotenv(find_dotenv())
@@ -38,7 +39,7 @@ keywords = {
    "bed": ['headboard', 'bed'],
    "shelves": ['shelves', 'bookshelves', 'bookcase'],
    "lamp": ['lamp'],
-   "dresser": ['dresser', 'chest', 'wardrobe'],
+   "dresser": ['dresser', 'chest', 'wardrobe', 'drawer'],
    "nightstand": ['nightstand'],
    "desk": ['desk', 'desk chair'],
    "armchair": ['armchair', 'recliner', 'loveseat', 'chair']
@@ -136,6 +137,7 @@ def generate_description_uploaded_input(image):
    #after description is producted, call generate_image function to generate image using dalle-3 based on description 
    generate_image(img_description)
 
+
 # A decorator used to tell the application
 # which URL is associated function
 @app.route('/main', methods =["GET", "POST"])
@@ -174,11 +176,29 @@ def home():
          generate_description_uploaded_input(uploaded_image)
       #if no uploaded image, generate description based on form inputs 
       else:
-         generate_description_user_input(list(selected_items.keys()), aesthetic)
-      
-      #after image has been generated, give actual furniture recommendations
-      print(f"Keys: {selected_items.keys()}")
-      print(f"Values: {selected_items.values()}")
+         #generate_description_user_input(list(selected_items.keys()), aesthetic)
+         #after image has been generated, give actual furniture recommendations
+         #loop through values (filtered df) of selected items and if there are more than 3 entires, pick 3 random entries and if less, show all entries
+         sources = []
+         for key, value in selected_items.items():
+            temp_sources = []
+            if value.shape[0] > 3:
+               #select 3 random rows from filtered df 
+               #generate three unique random numbers
+               suggestions = random.sample(range(value.shape[0]), 3)     
+               print(suggestions)
+               for suggestion in suggestions:
+                  temp_sources.append(value.iloc[suggestion]['image_url'])
+            else:
+               if not value.empty:
+                  for i in range(min(len(value), 3)):
+                     temp_sources.append(value.iloc[i]['image_url'])
+               else:
+                  print(f"df for {key} is empty")
+            sources.extend(temp_sources)
+         for item in sources: 
+            print(item)
+         return render_template("index.html", dynamicSources = sources)
    return render_template("index.html")
 
 if __name__=='__main__':

@@ -64,6 +64,9 @@
             </form>
             <img src="{{url_for('static', filename='/images/generated_image.jpg')}}", alt=""/>
             <!-- <p>{{ description }}</p> -->
+            {% for src in dynamicSources %}
+                <img class="hide-text", src="{{ src }}"/>
+            {% endfor %}
         </section>
     </body>
 </html>

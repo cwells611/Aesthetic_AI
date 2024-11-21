@@ -9,3 +9,11 @@
 #furnitureItems{
     column-count: 2;
 }
+
+.hide-text {
+    text-indent: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    height: 200px;
+    width: 200px;
+}
