@@ -8,6 +8,10 @@ import requests
 import base64
 import pandas as pd
 
+#function that will search throgh furniture csv and return filtered dataframe based on list of keywords 
+def piece_df(csv_file, keywords):
+   df = pd.read_csv(csv_file)
+
 #get the api key from the .env file and create am openai clinet 
 _ = load_dotenv(find_dotenv())
 client = OpenAI(api_key=os.getenv('OPEN_API_KEY'))
@@ -24,10 +28,6 @@ image_path = os.path.join(image_dir, image_name)
 #if directory does not exist, make one 
 if not os.path.isdir(image_dir):
    os.mkdir(image_dir)
-
-def csv_access(csv_file):
-   #read in csv and convert to pd dataframe 
-   furniture_csv = pd.read_csv(csv_file)
 
 #check to see if there is an image in dir, remove if there is
 #only want to display current image, if there is an image in the 

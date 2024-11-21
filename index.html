@@ -11,8 +11,61 @@
         <h1>Aesthetic AI</h1>
         <section id="dimenstion_form">
             <form id="input_form" method="post" action="/main">
-                <label for="txtInput">Enter a description: </label><br>
-                <textarea id="txtInput" name="txtInput"></textarea><br><br>
+                <label for="aesthetic">Choose your Aesthetic</label><br><br>
+                <select name="aesthetic" id="aesthetic">
+                    <option value="default">Select</option>
+                    <option value="rustic">Rustic</option>
+                    <option value="modern">Modern</option>
+                    <option value="industrial">Industrial</option>
+                    <option value="coastal">Coastal</option>
+                    <option value="traditional">Tradational</option>
+                    <option value="scandanavian">Scandanavian</option>
+                </select><br><br>
+                <p>Check which furniture pieces you would like included in the room</p>
+                <div id="furnitureItems">
+                    <label for="coffeeRables">Coffee Table</label>
+                    <input type="checkbox" id="coffeeTable", name="coffeeTable">
+                    <br>
+                    <label for="sideTable">Side Tables</label>
+                    <input type="checkbox" id="sideTable", name="sideTable">
+                    <br>
+                    <label for="couch">Couch</label>
+                    <input type="checkbox" id="couch", name="couch">
+                    <br>
+                    <label for="entertainmentCenter">Entertainment Center</label>
+                    <input type="checkbox" id="entertainmentCenter", name="entertainmentCenter">
+                    <br>
+                    <label for="tables">Coffee Table</label>
+                    <input type="checkbox" id="coffeeTable", name="coffeeTable">
+                    <br>
+                    <label for="rug">Area Rug</label>
+                    <input type="checkbox" id="rug", name="rug">
+                    <br>
+                    <label for="bed">Bed</label>
+                    <input type="checkbox" id="bed", name="bed">
+                    <br>
+                    <label for="shelves">Shelves</label>
+                    <input type="checkbox" id="shelves", name="shelves">
+                    <br>
+                    <label for="lamp">Lamp</label>
+                    <input type="checkbox" id="lamp", name="lamp">
+                    <br>
+                    <label for="dresser">Dresser</label>
+                    <input type="checkbox" id="dresser", name="dresser">
+                    <br>
+                    <label for="nightstand">Nightstand</label>
+                    <input type="checkbox" id="nightstand", name="nightstand">
+                    <br>
+                    <label for="desk">Desk</label>
+                    <input type="checkbox" id="desk", name="desk">
+                    <br>
+                    <label for="bookshelf">Bookshelf</label>
+                    <input type="checkbox" id="bookshelf", name="bookshelf">
+                    <br>
+                    <label for="armchair">Armchair</label>
+                    <input type="checkbox" id="armchair", name="armchair">
+                </div>
+                <br><br>
                 <label for="imgInput">Input Image</label><br><br>
                 <input type="file" id="imgInput" name="imgInput" accept=".jpg,.png,.jpeg"><br><br>
                 <button id="submit" name="submit" type="submit">Submit</button>
