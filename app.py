@@ -176,7 +176,7 @@ def home():
          generate_description_uploaded_input(uploaded_image)
       #if no uploaded image, generate description based on form inputs 
       else:
-         #generate_description_user_input(list(selected_items.keys()), aesthetic)
+         generate_description_user_input(list(selected_items.keys()), aesthetic)
          #after image has been generated, give actual furniture recommendations
          #loop through values (filtered df) of selected items and if there are more than 3 entires, pick 3 random entries and if less, show all entries
          sources = []

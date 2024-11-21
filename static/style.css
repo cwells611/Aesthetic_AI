@@ -17,3 +17,65 @@
     height: 200px;
     width: 200px;
 }
+body {
+    background-color: #1e1e1e;
+    color: #f1f1f1;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+h1 {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 2.5em;
+    color: #e5e5e5;
+}
+section {
+    max-width: 800px;
+    margin: 30px auto;
+    padding: 20px;
+    background: #2c2c2c;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+label, p {
+    font-size: 1.2em;
+    text-align: center;
+}
+select, input[type="file"], button {
+    background: #3a3a3a;
+    color: #f1f1f1;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 1em;
+    width: 100%;
+}
+button {
+    cursor: pointer;
+    background-color: #4caf50;
+    color: #fff;
+    transition: background-color 0.3s ease;
+}
+button:hover {
+    background-color: #45a049;
+}
+#furnitureItems label {
+    display: inline-block;
+    margin-right: 10px;
+}
+input[type="checkbox"] {
+    margin-right: 5px;
+}
+img {
+    display: block;
+    max-width: 100%;
+    margin: 20px auto;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
