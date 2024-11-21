@@ -10,7 +10,12 @@ import pandas as pd
 
 #function that will search throgh furniture csv and return filtered dataframe based on list of keywords 
 def piece_df(csv_file, keywords):
+   #read in csv file
    df = pd.read_csv(csv_file)
+   #create a new dataframe that only contains the rows where any of the keywords is in the image_title column
+   new_df = df.loc[df["image_title"].str.contains('|'.join(keywords), case=False, na=False)]
+   return new_df
+
 
 #get the api key from the .env file and create am openai clinet 
 _ = load_dotenv(find_dotenv())
@@ -98,6 +103,9 @@ def home():
    if request.method == "POST":
       input_description = request.form.get("txtInput")
       input_img = request.form.get("imgInput")
+      couch_keywords = ['couch', 'sofa', 'futon', 'sectional']
+      couch_df = piece_df("furniture.csv", couch_keywords)
+      print(couch_df[0])
       #if image is uploaded call uploaded_image function
       if input_img != "":
          #get uploaded image from HTML form 
