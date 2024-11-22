@@ -10,6 +10,10 @@
     column-count: 2;
 }
 
+#recommended{
+    column-count: 3;
+}
+
 .hide-text {
     text-indent: 100%;
     white-space: nowrap;

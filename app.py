@@ -27,18 +27,19 @@ if not os.path.isdir(image_dir):
    os.mkdir(image_dir)
 
 #csv file with furniture info 
-furniture_csv = 'furniture.csv'
+furniture_csv1 = 'incremental_scraped_data.csv'
+furniture_csv2 = 'furniture.csv'
 
 #dictionary of key words for each piece the user could select for later suggestions and csv file
 keywords = {
-   "coffee_table": ['coffee table'],
+   "coffee_table": ['coffee table', 'round'],
    "side_table": ['side table', 'end table', 'accent table'],
    "couch": ['couch', 'sofa', 'futon', 'sectional'],
    "entertainment_center": ['entertainment center', 'media', 'tv stand'],
    "rug": ['rug', 'area'],
-   "bed": ['headboard', 'bed'],
+   "bed": ['headboard', 'bed', 'nova'],
    "shelves": ['shelves', 'bookshelves', 'bookcase'],
-   "lamp": ['lamp'],
+   "lamp": ['lamp', 'light'],
    "dresser": ['dresser', 'chest', 'wardrobe', 'drawer'],
    "nightstand": ['nightstand'],
    "desk": ['desk', 'desk chair'],
@@ -52,11 +53,17 @@ if os.path.exists(image_path):
    os.remove(image_path)
 
 #function that will search throgh furniture csv and return filtered dataframe based on list of keywords 
-def piece_df(csv_file, keywords, aesthetic):
-   #read in csv file
-   df = pd.read_csv(csv_file)
+def piece_df(csv_file1, csv_file2, keywords):
+   #read in csv files
+   df1 = pd.read_csv(csv_file1)
+   df2 = pd.read_csv(csv_file2)
+   #concatanate files 
+   df2 = df2.drop(columns=['price_text'])
+   df = pd.concat([df1, df2], axis=0, ignore_index=True)
+   #convert title column to lowerase 
+   df['image_title'] = df['image_title'].str.lower()
    #create a new dataframe that only contains the rows where any of the keywords and aesthetic is in the image_title column
-   new_df = df[df['image_title'].str.contains('|'.join(keywords), case=False, na=False) & df['image_title'].str.contains(aesthetic, case=False, na=False)]
+   new_df = df[df['image_title'].str.contains('|'.join(keywords), case=False, na=False)]
    return new_df
 
 #function to save generated image for display 
@@ -119,7 +126,7 @@ def generate_description_uploaded_input(image):
             "content": [
                {
                   "type": "text",
-                  "text": "Analyze this image and provide a detailed description of the room, including the furniture, decor, colors, and any notable objects. Describe the layout, the style of the room (e.g., modern, rustic), and how the objects contribute to its functionality and ambiance. Include any inferences about how this room might be used or what it reveals about its occupants.",
+                  "text": "Analyze this image and provide a detailed description of the room, including the furniture, decor, colors, and any notable objects. Describe the layout, the aesthetic of the room (e.g., modern, rustic).",
                },
                {
                   "type": "image_url",
@@ -166,7 +173,7 @@ def home():
       for piece in furniture_items:
          #if value is on, then generate filtered df and add to selected dict 
          if furniture_items[piece] == 'on':
-            filtered_df = piece_df(furniture_csv, keywords[piece], aesthetic)
+            filtered_df = piece_df(furniture_csv1, furniture_csv2, keywords[piece])
             selected_items[piece] = filtered_df
          
       #if image is uploaded call uploaded_image function
@@ -186,19 +193,14 @@ def home():
                #select 3 random rows from filtered df 
                #generate three unique random numbers
                suggestions = random.sample(range(value.shape[0]), 3)     
-               print(suggestions)
                for suggestion in suggestions:
                   temp_sources.append(value.iloc[suggestion]['image_url'])
             else:
                if not value.empty:
                   for i in range(min(len(value), 3)):
                      temp_sources.append(value.iloc[i]['image_url'])
-               else:
-                  print(f"df for {key} is empty")
             sources.extend(temp_sources)
-         for item in sources: 
-            print(item)
-         recommendation_string = "Based on your preferences and the items in the generated image, here are some furniture recommendations"
+         recommendation_string = "Based on your preferences and the items in the generated image, here are some furniture recommendations from our database."
          return render_template("index.html", dynamicSources = sources, title_string = recommendation_string)
    return render_template("index.html")
 
