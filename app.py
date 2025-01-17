@@ -9,9 +9,8 @@ import base64
 import pandas as pd
 import random
 
-#get the api key from the .env file and create am openai clinet 
-_ = load_dotenv(find_dotenv())
-client = OpenAI(api_key=os.getenv('OPEN_API_KEY'))
+#get the api key
+client = OpenAI(api_key="API Key HERE")
   
 # Flask constructor
 app = Flask(__name__, template_folder=os.getcwd())  
